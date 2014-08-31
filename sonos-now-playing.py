@@ -14,6 +14,8 @@ PLAY_STATE_LABELS = {
 
 
 for c in coords:
+
+  # Make a "Sonos" like group label
   group_names = sorted([m.player_name for m in c.group.members])
   group_label = group_names[0]
   if len(group_names) > 1:
