@@ -25,7 +25,7 @@ for c in coords:
   play_state = trans_info['current_transport_state']
   play_state_label = PLAY_STATE_LABELS.get(play_state, play_state)
 
-  if track_info['title'] != '':
+  if play_state != 'STOPPED' and track_info['title'] != '':
     track = track_info['title'] + ' - ' + track_info['album'] + ' / ' + track_info['artist']
     track += '   ' + track_info['position'] + ' / ' + track_info['duration']
   else:
