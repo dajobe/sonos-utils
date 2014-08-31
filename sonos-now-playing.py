@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import sys
+import codecs
+sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
 import soco
 
@@ -36,4 +38,4 @@ for c in coords:
     track = ''
 
   line = "%15s  %7s  %s" % (group_label, play_state_label, track)
-  sys.stdout.write(line.encode('utf-8'))
+  print line
