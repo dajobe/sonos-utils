@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import sys
+
 import soco
 
 speakers = soco.discover()
@@ -33,4 +35,5 @@ for c in coords:
   else:
     track = ''
 
-  print "%15s  %7s  %s" % (group_label, play_state_label, track)
+  line = "%15s  %7s  %s" % (group_label, play_state_label, track)
+  sys.stdout.write(line.encode('utf-8'))
