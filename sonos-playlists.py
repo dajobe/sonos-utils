@@ -26,10 +26,12 @@ import soco
 import requests.packages.urllib3.exceptions
 
 
-logger = logging.getLogger('sonos-playlists')
+Logger = logging.getLogger('sonos-playlists')
 
 
 class InspectSonosPlaylist(object):
+  """ Inspect sonos playlists """
+
   def __init__(self):
     self.speakers = None
     self.coord = None
@@ -103,7 +105,9 @@ class InspectSonosPlaylist(object):
     if len(duplicates) > 0:
       print "\nPlaylist has %d duplicates" % (len(duplicates), )
       for (i, item, first_i) in duplicates:
-        print "  %4d %s - %s / %s seen first at %d" % (i, item.title, item.album, item.creator, first_i)
+        print "  %4d %s - %s / %s seen first at %d" % (i, item.title,
+                                                       item.album,
+                                                       item.creator, first_i)
 
 
 def main():
@@ -124,16 +128,18 @@ def main():
     ######################################################################
 
     if debug:
-      level=logging.DEBUG
+      level = logging.DEBUG
     else:
-      level=logging.ERROR
-    logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s', level=level)
+      level = logging.ERROR
+    logging.basicConfig(format='%(levelname)s:%(name)s:%(message)s', 
+                        level = level)
 
     try:
       isp = InspectSonosPlaylist()
       coord = isp.find_coordinator()
       if coord is not None:
-        print "Using coordinator speaker %s - %s" % (coord.player_name, coord.ip_address)
+        print "Using coordinator speaker %s - %s" % (coord.player_name,
+                                                     coord.ip_address)
         pl_titles = ["'" + pl.title + "'" for pl in isp.get_playlists(coord)]
 
         if len(titles) == 0:
@@ -142,15 +148,15 @@ def main():
           for title in titles:
             playlist = isp.find_playlist(coord, title)
             if playlist is None:
-              logger.error("Could not find sonos playlist with title '%s' - known ones are: %s", title, " ".join(pl_titles))
+              Logger.error("Could not find sonos playlist with title '%s' - known ones are: %s", title, " ".join(pl_titles))
               sys.exit(1)
             else:
               isp.inspect_playlist(coord, playlist)
       else:
-        logger.error("Could not find sonos coordinator speaker")
+        Logger.error("Could not find sonos coordinator speaker")
 
-    except requests.packages.urllib3.exceptions.ProtocolError, e:
-      logger.error("Network error: %s",str(e))
+    except requests.packages.urllib3.exceptions.ProtocolError, exc:
+      Logger.error("Network error: %s", str(exc))
       sys.exit(1)
 
     sys.exit(0)
