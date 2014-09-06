@@ -124,7 +124,8 @@ def main():
         for title in titles:
           playlist = isp.find_playlist(coord, title)
           if playlist is None:
-            logger.error("Could not find sonos playlist with title '%s'", title)
+            pl_titles = ["'" + pl.title + "'" for pl in isp.get_playlists(coord)]
+            logger.error("Could not find sonos playlist with title '%s' - known playlists are: %s", title, " ".join(pl_titles))
             sys.exit(1)
           else:
             isp.inspect_playlist(coord, playlist)
