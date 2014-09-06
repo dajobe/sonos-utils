@@ -26,7 +26,7 @@ import soco
 import requests.packages.urllib3.exceptions
 
 
-Logger = logging.getLogger('sonos-playlists')
+LOGGER = logging.getLogger('sonos-playlists')
 
 
 class InspectSonosPlaylist(object):
@@ -148,15 +148,15 @@ def main():
           for title in titles:
             playlist = isp.find_playlist(coord, title)
             if playlist is None:
-              Logger.error("Could not find sonos playlist with title '%s' - known ones are: %s", title, " ".join(pl_titles))
+              LOGGER.error("Could not find sonos playlist with title '%s' - known ones are: %s", title, " ".join(pl_titles))
               sys.exit(1)
             else:
               isp.inspect_playlist(coord, playlist)
       else:
-        Logger.error("Could not find sonos coordinator speaker")
+        LOGGER.error("Could not find sonos coordinator speaker")
 
     except requests.packages.urllib3.exceptions.ProtocolError, exc:
-      Logger.error("Network error: %s", str(exc))
+      LOGGER.error("Network error: %s", str(exc))
       sys.exit(1)
 
     sys.exit(0)
