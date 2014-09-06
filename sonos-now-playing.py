@@ -46,5 +46,5 @@ try:
     line = "%15s  %7s  %s" % (group_label, play_state_label, track)
     print line
 
-except requests.packages.urllib3.exceptions.ProtocolError, e
+except requests.packages.urllib3.exceptions.ProtocolError, e:
   print "Network error: %s" % (str(e), )
