@@ -121,14 +121,22 @@ def main():
       isp = InspectSonosPlaylist()
       coord = isp.find_coordinator()
       if coord is not None:
-        for title in titles:
-          playlist = isp.find_playlist(coord, title)
-          if playlist is None:
-            pl_titles = ["'" + pl.title + "'" for pl in isp.get_playlists(coord)]
-            logger.error("Could not find sonos playlist with title '%s' - known playlists are: %s", title, " ".join(pl_titles))
-            sys.exit(1)
-          else:
-            isp.inspect_playlist(coord, playlist)
+        print "Using coordinator speaker %s - %s" % (coord.player_name, coord.ip_address)
+        pl_titles = ["'" + pl.title + "'" for pl in isp.get_playlists(coord)]
+
+        if len(titles) == 0:
+          print "Known sonos playlists are: " + " ".join(pl_titles)
+        else:
+          for title in titles:
+            playlist = isp.find_playlist(coord, title)
+            if playlist is None:
+              logger.error("Could not find sonos playlist with title '%s' - known ones are: %s", title, " ".join(pl_titles))
+              sys.exit(1)
+            else:
+              isp.inspect_playlist(coord, playlist)
+      else:
+        logger.error("Could not find sonos coordinator speaker")
+
     except requests.packages.urllib3.exceptions.ProtocolError, e:
       logger.error("Network error: %s",str(e))
       sys.exit(1)
