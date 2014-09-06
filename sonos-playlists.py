@@ -1,4 +1,16 @@
 #!/usr/bin/python
+"""
+Inspect sonos playlists
+
+USAGE: sonos-playlists.py [OPTIONS] TITLE...
+
+OPTIONS:
+  -h / --help  show help messsage
+  -d / --debug enable debug messages 
+
+If No TITLEs are given, all the known sonos playlist titles are shown.
+
+"""
 
 # system
 import logging
