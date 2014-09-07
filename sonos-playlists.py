@@ -70,10 +70,8 @@ class InspectSonosPlaylist(object):
     return result
 
 
-  def inspect_playlist(self, speaker, playlist):
-    """ Inspect a sonos playlist """
-    print "Found sonos playlist %s - '%s' " % (playlist.item_id, playlist.title)
-
+  def get_all_playlist_items(self, speaker, playlist):
+    """ get a list of all items in the given playlist """
     batch_size = 300
     start = 0
     total = None
@@ -90,25 +88,62 @@ class InspectSonosPlaylist(object):
       if start >= total:
         break
 
-    i = 1
+    return playlist_items
+
+  def dedup_items(self, playlist_items):
+    """ Dedup palylist items
+
+    Returns tuple of (list of (index, item, original_index), unique items)
+    """
+
+    index = 1
     duplicates = []
+    unique_items = []
     seen = dict()
     for item in playlist_items:
-      print "%4d %s - %s / %s" % (i, item.title, item.album, item.creator)
       if item.uri in seen:
-        print "  DUPLICATE: seen first at %d" % (seen[item.uri], )
-        duplicates.append((i, item, seen[item.uri]))
+        duplicates.append((index, item, seen[item.uri]))
       else:
-        seen[item.uri] = i
-      i += 1
+        seen[item.uri] = index
+        unique_items.append(item)
+      index += 1
+
+    return (duplicates, unique_items)
+
+  def inspect_playlist(self, speaker, playlist):
+    """ Inspect a sonos playlist """
+    print "Found sonos playlist %s - '%s' " % (playlist.item_id, playlist.title)
+
+    playlist_items = self.get_all_playlist_items(speaker, playlist)
+
+    (duplicates, unique_items) = self.dedup_items(playlist_items)
+    index = 1
+    for item in unique_items:
+      print "%4d %s - %s / %s" % (index, item.title, item.album, item.creator)
+      index += 1
 
     if len(duplicates) > 0:
       print "\nPlaylist has %d duplicates" % (len(duplicates), )
-      for (i, item, first_i) in duplicates:
-        print "  %4d %s - %s / %s seen first at %d" % (i, item.title,
+      for (index, item, first_index) in duplicates:
+        print "  %4d %s - %s / %s seen first at %d" % (index, item.title,
                                                        item.album,
-                                                       item.creator, first_i)
+                                                       item.creator,
+                                                       first_index)
 
+  def create_deduped_playlist(self, speaker, playlist, title):
+    """ Create a new deduped sonos playlist
+
+      :title Title of new playlist
+    """
+    playlist_items = self.get_all_playlist_items(playlist)
+
+    (duplicates, unique_items) = self.dedup_items(playlist_items)
+
+    sorted_playlist_items = sorted(unique_items, key=lambda item: item.creator + '/' + item.album + '/' + item.title)
+
+    new_pl = speaker.create_sonos_playlist(title)
+    for item in sorted_playlist_items:
+      add_item_to_sonos_playlist(item, new_pl)
 
 def main():
     """Main method"""
@@ -152,6 +187,8 @@ def main():
               sys.exit(1)
             else:
               isp.inspect_playlist(coord, playlist)
+              # isp.create_deduped_playlist(coord, playlist, title + ' NEW')
+
       else:
         LOGGER.error("Could not find sonos coordinator speaker")
 
