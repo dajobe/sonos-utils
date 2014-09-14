@@ -1,7 +1,11 @@
 """ Common code not yet in SoCo """
 
+# system
+import re
+
 from soco.utils import really_utf8
 from soco.xml import XML
+
 
 def get_queue_size(speaker):
     """ Get queue size """
@@ -45,3 +49,14 @@ def get_all_queue_items(speaker, playlist):
 
     return playlist_items
 
+def is_playing_tv(speaker):
+    """ Is the speaker input from TV?
+
+    return True or False
+    """
+    response = speaker.avTransport.GetPositionInfo([
+        ('InstanceID', 0),
+        ('Channel', 'Master')
+    ])
+    track_uri = response['TrackURI']
+    return re.match(r'^x-sonos-htastream:', track_uri) is not None
