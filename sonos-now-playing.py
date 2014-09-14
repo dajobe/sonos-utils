@@ -3,7 +3,6 @@
 
 # system
 import sys
-import time
 import codecs
 sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
@@ -11,20 +10,13 @@ sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import get_queue_size, is_playing_tv
+from common import get_queue_size, is_playing_tv, find_a_coordinator
 
 
 try:
-  for count in range(0, 5):
-    speakers = soco.discover()
-    if speakers is not None:
-      break
-    time.sleep(1)
+  (speakers, coords) = find_a_coordinator()
   if speakers is None:
     raise "Could not find any speakers"
-
-  coords = [s for s in speakers if s.is_coordinator]
-
   if len(coords) == 0:
     raise "Could not find any coordinators in speakers"
 

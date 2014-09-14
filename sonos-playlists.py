@@ -25,8 +25,7 @@ import argparse
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import get_queue_size
-
+from common import get_queue_size, is_playing_tv, find_a_coordinator, get_all_playlist_items
 
 LOGGER = logging.getLogger('sonos-playlists')
 
@@ -44,14 +43,10 @@ class InspectSonosPlaylist(object):
     if self.coord is not None:
       return self.coord
 
-    if self.speakers is None:
-      self.speakers = soco.discover()
-
-    for speaker in self.speakers:
-      if speaker.is_coordinator:
-        self.coord = speaker
-        return self.coord
-    return None
+    (self.speakers, coords) = find_a_coordinator()
+    if len(coords) > 0:
+      self.coord = coords[0]
+    return self.coord
 
 
   def get_playlists(self, speaker):
@@ -74,23 +69,10 @@ class InspectSonosPlaylist(object):
 
   def get_all_playlist_items(self, speaker, playlist):
     """ get a list of all items in the given playlist """
-    batch_size = 300
-    start = 0
-    total = None
-
-    playlist_items = []
-    while True:
-      out = speaker.browse(playlist, max_items = batch_size, start=start)
-      if total is None:
-        total = out.total_matches
-        print "Playlist %s has %d items" % (playlist.title, total)
-
-      playlist_items += out[:]
-      start += len(out)
-      if start >= total:
-        break
-
+    playlist_items = get_all_playlist_items(speaker, playlist)
+    print "Playlist %s has %d items" % (playlist.title, len(playlist_items))
     return playlist_items
+
 
   def dedup_items(self, playlist_items):
     """ Dedup palylist items
@@ -137,15 +119,25 @@ class InspectSonosPlaylist(object):
 
       :title Title of new playlist
     """
-    playlist_items = self.get_all_playlist_items(playlist)
+    playlist_items = self.get_all_playlist_items(speaker, playlist)
 
     (duplicates, unique_items) = self.dedup_items(playlist_items)
 
-    sorted_playlist_items = sorted(unique_items, key=lambda item: item.creator + '/' + item.album + '/' + item.title)
+    def sort_item_key(item):
+      "%s / %s / %s" % (item.creator,
+                        item.album if item.album else '',
+                        item.title)
+
+    sorted_playlist_items = sorted(unique_items, key=sort_item_key)
+
+    print sorted_playlist_items[0]
+    print sorted_playlist_items[0].item_id
+    print sorted_playlist_items[0].didl_metadata
+    return
 
     new_pl = speaker.create_sonos_playlist(title)
     for item in sorted_playlist_items:
-      add_item_to_sonos_playlist(item, new_pl)
+      speaker.add_item_to_sonos_playlist(item, new_pl)
 
 def main():
     """Main method"""
