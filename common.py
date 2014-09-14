@@ -11,6 +11,21 @@ from soco.utils import really_utf8
 from soco.xml import XML
 
 
+def speaker_group_label(speaker):
+    """ Get a description of the group a speaker is in """
+    group_names = sorted([m.player_name for m in speaker.group.members])
+    return ", ".join(group_names)
+
+
+def short_speaker_group_label(speaker):
+    """ Get a short description of the group a speaker is in """
+    group_names = sorted([m.player_name for m in speaker.group.members])
+    group_label = group_names[0]
+    if len(group_names) > 1:
+        group_label += " + %d" % (len(group_names)-1, )
+    return group_label
+
+
 def find_all_coordinators(attempts=5):
     """ Find all speakers and coordinators """
     coords = []
