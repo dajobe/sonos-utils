@@ -10,11 +10,11 @@ sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import get_queue_size, is_playing_tv, find_a_coordinator
+from common import get_queue_size, is_playing_tv, find_all_coordinators
 
 
 try:
-  (speakers, coords) = find_a_coordinator()
+  (speakers, coords) = find_all_coordinators()
   if speakers is None:
     raise "Could not find any speakers"
   if len(coords) == 0:

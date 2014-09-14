@@ -25,7 +25,7 @@ import argparse
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import get_queue_size, is_playing_tv, find_a_coordinator, get_all_playlist_items
+from common import get_queue_size, is_playing_tv, find_all_coordinators, get_all_playlist_items
 
 LOGGER = logging.getLogger('sonos-playlists')
 
@@ -43,7 +43,7 @@ class InspectSonosPlaylist(object):
     if self.coord is not None:
       return self.coord
 
-    (self.speakers, coords) = find_a_coordinator()
+    (self.speakers, coords) = find_all_coordinators()
     if len(coords) > 0:
       self.coord = coords[0]
     return self.coord

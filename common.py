@@ -11,8 +11,8 @@ from soco.utils import really_utf8
 from soco.xml import XML
 
 
-def find_a_coordinator(attempts=5):
-    """ Find a coordinator speaker """
+def find_all_coordinators(attempts=5):
+    """ Find all speakers and coordinators """
     coords = []
 
     for count in range(0, attempts):
