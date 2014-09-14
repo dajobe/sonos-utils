@@ -1,7 +1,9 @@
 #!/usr/bin/python
+""" Get what is currenty playing """
 
 # system
 import sys
+import time
 import codecs
 sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
@@ -12,9 +14,18 @@ import requests.packages.urllib3.exceptions
 
 
 try:
-  speakers = soco.discover()
+  for count in range(0, 5):
+    speakers = soco.discover()
+    if speakers is not None:
+      break
+    time.sleep(1)
+  if speakers is None:
+    raise "Could not find any speakers"
 
-  coords=[s for s in speakers if s.is_coordinator]
+  coords = [s for s in speakers if s.is_coordinator]
+
+  if len(coords) == 0:
+    raise "Could not find any coordinators in speakers"
 
   PLAY_STATE_LABELS = {
     'STOPPED' :         'stopped',
