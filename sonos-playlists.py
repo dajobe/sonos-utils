@@ -25,7 +25,7 @@ import argparse
 import soco
 import requests.packages.urllib3.exceptions
 
-from .common import get_queue_size
+from common import get_queue_size
 
 
 LOGGER = logging.getLogger('sonos-playlists')
