@@ -11,6 +11,7 @@ sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 import soco
 import requests.packages.urllib3.exceptions
 
+import .common
 
 
 try:
