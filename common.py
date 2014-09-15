@@ -31,7 +31,7 @@ def find_all_coordinators(attempts=5):
     coords = []
 
     for _ in range(0, attempts):
-        speakers = soco.discover()
+        speakers = soco.discover(timeout=5)
         if speakers is not None:
             break
     time.sleep(1)
