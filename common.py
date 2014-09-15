@@ -30,7 +30,7 @@ def find_all_coordinators(attempts=5):
     """ Find all speakers and coordinators """
     coords = []
 
-    for count in range(0, attempts):
+    for _ in range(0, attempts):
         speakers = soco.discover()
         if speakers is not None:
             break
@@ -106,7 +106,7 @@ def get_all_playlist_items(speaker, playlist):
 
     playlist_items = []
     while True:
-        out = speaker.browse(playlist, max_items = batch_size, start=start)
+        out = speaker.browse(playlist, max_items=batch_size, start=start)
         if total is None:
             total = out.total_matches
 
