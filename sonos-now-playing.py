@@ -21,15 +21,13 @@ try:
     raise "Could not find any coordinators in speakers"
 
   PLAY_STATE_LABELS = {
-    'STOPPED' :         'stopped',
-    'PAUSED_PLAYBACK' : 'paused',
-    'PLAYING' :         'playing'
+    'STOPPED' :         'Stopped',
+    'PAUSED_PLAYBACK' : 'Paused',
+    'PLAYING' :         'Playing'
   }
 
 
   for c in coords:
-
-    # Make a "Sonos" like group label
     group_names = sorted([m.player_name for m in c.group.members])
     group_label = group_names[0]
     if len(group_names) > 1:
@@ -50,9 +48,9 @@ try:
       track = ''
 
     if is_playing_tv(c):
-      line = "%15s  Playing TV" % (group_label, )
+      line = "%15s: Playing TV" % (group_label, )
     else:
-      line = "%15s  %7s  %s (Queue %d)" % (group_label, play_state_label, track, queue_size)
+      line = "%15s: %-7s Track: %s (Queue %d)" % (group_label, play_state_label, track, queue_size)
     print line
 
 except requests.packages.urllib3.exceptions.ProtocolError, e:
