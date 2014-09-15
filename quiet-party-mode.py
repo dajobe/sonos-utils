@@ -24,6 +24,10 @@ def main():
 
     try:
         (speakers, coords) = find_all_coordinators()
+        if speakers is None:
+            raise "Could not find any speakers"
+        if len(coords) == 0:
+            raise "Could not find any coordinators in speakers"
 
         coords_with_queues = [s for s in coords if get_queue_size(s) > 0]
 
