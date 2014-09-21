@@ -59,8 +59,8 @@ def get_queue_size(speaker):
 
     result_dom = XML.fromstring(really_utf8(result))
 
-    container = result_dom.find(\
-       '{urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/}container')
+    container = result_dom.find(
+        '{urn:schemas-upnp-org:metadata-1-0/DIDL-Lite/}container')
 
     return int(container.get('childCount'))
 
