@@ -134,7 +134,7 @@ def create_sonos_playlist_from_queue(speaker, title):
     # but this has not been tested.  This method is what the
     # controller uses.
     response = speaker.avTransport.SaveQueue([
-        ('InstanceID', '0'),
+        ('InstanceID', 0),
         ('Title', title),
         ('ObjectID', '')
     ])
