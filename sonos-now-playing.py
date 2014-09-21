@@ -48,10 +48,13 @@ try:
       track = ''
 
     if is_playing_tv(c):
-      line = "%15s: Playing TV" % (group_label, )
+      line = "{0:15s}: Playing TV".format(group_label)
     else:
-      line = "%15s: %-7s Track: %s (Queue %d)" % (group_label, play_state_label, track, queue_size)
+      line = "{0:15s}: {1:<7s} Track: {2} (Queue {3})".format(group_label,
+                                                              play_state_label,
+                                                              track,
+                                                              queue_size)
     print line
 
 except requests.packages.urllib3.exceptions.ProtocolError, e:
-  print "Network error: %s" % (str(e), )
+  print "Network error: " + str(e)

@@ -12,17 +12,17 @@ from soco.xml import XML
 
 
 def speaker_group_label(speaker):
-    """ Get a description of the group a speaker is in """
+    """ A description of the group """
     group_names = sorted([m.player_name for m in speaker.group.members])
     return ", ".join(group_names)
 
 
 def short_speaker_group_label(speaker):
-    """ Get a short description of the group a speaker is in """
+    """ A short description of the group """
     group_names = sorted([m.player_name for m in speaker.group.members])
     group_label = group_names[0]
     if len(group_names) > 1:
-        group_label += " + %d" % (len(group_names)-1, )
+        group_label += " + {0}".format(len(group_names)-1)
     return group_label
 
 

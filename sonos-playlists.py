@@ -70,7 +70,8 @@ class InspectSonosPlaylist(object):
   def get_all_playlist_items(self, speaker, playlist):
     """ get a list of all items in the given playlist """
     playlist_items = get_all_playlist_items(speaker, playlist)
-    print "Playlist %s has %d items" % (playlist.title, len(playlist_items))
+    print "Playlist '{0} has {0} items" .format(playlist.title, 
+                                                len(playlist_items))
     return playlist_items
 
 
@@ -96,23 +97,26 @@ class InspectSonosPlaylist(object):
 
   def inspect_playlist(self, speaker, playlist):
     """ Inspect a sonos playlist """
-    print "Found sonos playlist %s - '%s' " % (playlist.item_id, playlist.title)
+    print "Found sonos playlist {0} - '{0}' ".format(playlist.item_id,
+                                                     playlist.title)
 
     playlist_items = self.get_all_playlist_items(speaker, playlist)
 
     (duplicates, unique_items) = self.dedup_items(playlist_items)
     index = 1
     for item in unique_items:
-      print "%4d %s - %s / %s" % (index, item.title, item.album, item.creator)
+      print "{0:4d} {1} - {2} / {3}".format(index, item.title, item.album,
+                                             item.creator)
       index += 1
 
     if len(duplicates) > 0:
-      print "\nPlaylist has %d duplicates" % (len(duplicates), )
+      print "\nPlaylist has {0} duplicates".format(len(duplicates))
       for (index, item, first_index) in duplicates:
-        print "  %4d %s - %s / %s seen first at %d" % (index, item.title,
-                                                       item.album,
-                                                       item.creator,
-                                                       first_index)
+        print "  {0:4d} {1} - {2} / {3} seen first at {4}".format(index,
+                                                                  item.title,
+                                                                  item.album,
+                                                                  item.creator,
+                                                                  first_index)
 
   def create_deduped_playlist(self, speaker, playlist, title):
     """ Create a new deduped sonos playlist
@@ -124,9 +128,9 @@ class InspectSonosPlaylist(object):
     (duplicates, unique_items) = self.dedup_items(playlist_items)
 
     def sort_item_key(item):
-      "%s / %s / %s" % (item.creator,
-                        item.album if item.album else '',
-                        item.title)
+      "{1} / {2} / {3}".format(item.creator,
+                               item.album if item.album else '',
+                               item.title)
 
     sorted_playlist_items = sorted(unique_items, key=sort_item_key)
 
@@ -167,8 +171,8 @@ def main():
       isp = InspectSonosPlaylist()
       coord = isp.find_coordinator()
       if coord is not None:
-        print "Using coordinator speaker %s - %s" % (coord.player_name,
-                                                     coord.ip_address)
+        print "Using coordinator speaker {0} - {1}".format(coord.player_name,
+                                                           coord.ip_address)
         pl_titles = ["'" + pl.title + "'" for pl in isp.get_playlists(coord)]
 
         if len(titles) == 0:
@@ -177,7 +181,7 @@ def main():
           for title in titles:
             playlist = isp.find_playlist(coord, title)
             if playlist is None:
-              LOGGER.error("Could not find sonos playlist with title '%s' - known ones are: %s", title, " ".join(pl_titles))
+              LOGGER.error("Could not find sonos playlist with title '{0}' - known ones are: {1}".format(title, " ".join(pl_titles)))
               sys.exit(1)
             else:
               isp.inspect_playlist(coord, playlist)
@@ -187,7 +191,7 @@ def main():
         LOGGER.error("Could not find sonos coordinator speaker")
 
     except requests.packages.urllib3.exceptions.ProtocolError, exc:
-      LOGGER.error("Network error: %s", str(exc))
+      LOGGER.error("Network error: " + str(exc))
       sys.exit(1)
 
     sys.exit(0)

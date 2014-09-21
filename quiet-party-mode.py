@@ -41,7 +41,7 @@ def main():
         print "Arranged speakers into group: " + speaker_group_label(coord)
 
     except requests.packages.urllib3.exceptions.ProtocolError, exc:
-        print "Network error: %s" % (str(exc), )
+        print "Network error: " + str(exc)
 
     sys.exit(0)
 
