@@ -34,11 +34,11 @@ def find_all_coordinators(attempts=5):
         speakers = soco.discover(timeout=5)
         if speakers is not None:
             break
-    time.sleep(1)
-
-    for speaker in speakers:
-        if speaker.is_coordinator:
-            coords.append(speaker)
+        time.sleep(1)
+    if speakers is not None:
+        for speaker in speakers:
+            if speaker.is_coordinator:
+                coords.append(speaker)
     return (speakers, coords)
 
 
