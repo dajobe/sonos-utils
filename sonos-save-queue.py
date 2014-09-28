@@ -22,7 +22,7 @@ import argparse
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import find_all_coordinators, get_queue_size, create_sonos_playlist_from_queue
+from common import find_all_coordinators, create_sonos_playlist_from_queue
 
 
 LOGGER = logging.getLogger('sonos-save-queue')
@@ -58,7 +58,7 @@ def main():
         if len(coords) == 0:
             raise "Could not find any coordinators in speakers"
 
-        coords_with_queues = [s for s in coords if get_queue_size(s) > 0]
+        coords_with_queues = [s for s in coords if s.queue_size > 0]
 
         coord = coords_with_queues[0]
 

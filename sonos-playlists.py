@@ -25,7 +25,7 @@ import argparse
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import get_queue_size, is_playing_tv, find_all_coordinators, get_all_playlist_items
+from common import is_playing_tv, find_all_coordinators, get_all_playlist_items
 
 LOGGER = logging.getLogger('sonos-playlists')
 

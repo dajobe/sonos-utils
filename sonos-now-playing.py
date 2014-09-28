@@ -10,7 +10,7 @@ sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import get_queue_size, is_playing_tv, find_all_coordinators
+from common import is_playing_tv, find_all_coordinators
 
 
 try:
@@ -36,7 +36,7 @@ try:
     trans_info = c.get_current_transport_info()
     track_info = c.get_current_track_info()
 
-    queue_size = get_queue_size(c)
+    queue_size = c.queue_size
 
     play_state = trans_info['current_transport_state']
     play_state_label = PLAY_STATE_LABELS.get(play_state, play_state)
