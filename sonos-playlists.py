@@ -70,8 +70,8 @@ class InspectSonosPlaylist(object):
   def get_all_playlist_items(self, speaker, playlist):
     """ get a list of all items in the given playlist """
     playlist_items = get_all_playlist_items(speaker, playlist)
-    print "Playlist '{0} has {0} items" .format(playlist.title, 
-                                                len(playlist_items))
+    print "Playlist '{0}' has {1} items" .format(playlist.title, 
+                                                 len(playlist_items))
     return playlist_items
 
 
