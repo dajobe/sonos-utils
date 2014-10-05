@@ -97,7 +97,7 @@ class InspectSonosPlaylist(object):
 
   def inspect_playlist(self, speaker, playlist):
     """ Inspect a sonos playlist """
-    print "Found sonos playlist {0} - '{0}' ".format(playlist.item_id,
+    print "Found sonos playlist {0} - '{1}' ".format(playlist.item_id,
                                                      playlist.title)
 
     playlist_items = self.get_all_playlist_items(speaker, playlist)
