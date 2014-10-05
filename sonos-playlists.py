@@ -12,6 +12,8 @@ If No TITLEs are given, all the known sonos playlist titles are shown.
 
 """
 
+from __future__ import print_function
+
 # system
 import logging
 import sys
@@ -35,6 +37,10 @@ from soco.xml import XML
 from common import is_playing_tv, find_all_coordinators, get_all_playlist_items
 
 LOGGER = logging.getLogger('sonos-playlists')
+
+
+def warning(*objs):
+    print(*objs, file=sys.stderr)
 
 
 class InspectSonosPlaylist(object):
@@ -77,8 +83,8 @@ class InspectSonosPlaylist(object):
   def get_all_playlist_items(self, speaker, playlist):
     """ get a list of all items in the given playlist """
     playlist_items = get_all_playlist_items(speaker, playlist)
-    print "Playlist '{0}' has {1} items" .format(playlist.title, 
-                                                 len(playlist_items))
+    warning("Playlist '{0}' has {1} items" .format(playlist.title,
+                                                   len(playlist_items)))
     return playlist_items
 
 
@@ -104,33 +110,33 @@ class InspectSonosPlaylist(object):
 
   def inspect_playlist(self, speaker, playlist):
     """ Inspect a sonos playlist """
-    print "Found sonos playlist {0} - '{1}' ".format(playlist.item_id,
-                                                     playlist.title)
+    warning("Found sonos playlist {0} - '{1}' ".format(playlist.item_id,
+                                                       playlist.title))
 
     playlist_items = self.get_all_playlist_items(speaker, playlist)
 
     (duplicates, unique_items) = self.dedup_items(playlist_items)
     index = 1
     for item in unique_items:
-      print "{0:4d} {1} - {2} / {3}".format(index, item.title, item.album,
-                                             item.creator)
+      warning("{0:4d} {1} - {2} / {3}".format(index, item.title, item.album,
+                                              item.creator))
       index += 1
 
     if len(duplicates) > 0:
-      print "\nPlaylist has {0} duplicates".format(len(duplicates))
+      warning("\nPlaylist has {0} duplicates".format(len(duplicates)))
       for (index, item, first_index) in duplicates:
-        print "  {0:4d} {1} - {2} / {3} seen first at {4}".format(index,
-                                                                  item.title,
-                                                                  item.album,
-                                                                  item.creator,
-                                                                  first_index)
+        warning("  {0:4d} {1} - {2} / {3} seen first at {4}".format(index,
+                                                                    item.title,
+                                                                    item.album,
+                                                                    item.creator,
+                                                                    first_index))
 
   def print_playlist_json(self, speaker, playlist):
     """ Print a JSON dump of a sonos playlist """
     playlist_items = self.get_all_playlist_items(speaker, playlist)
     (duplicates, unique_items) = self.dedup_items(playlist_items)
     for item in unique_items:
-      print json.dumps(item.to_dict)
+      print(json.dumps(item.to_dict))
 
   def create_deduped_playlist(self, speaker, playlist, title):
     """ Create a new deduped sonos playlist
@@ -148,9 +154,9 @@ class InspectSonosPlaylist(object):
 
     sorted_playlist_items = sorted(unique_items, key=sort_item_key)
 
-    print sorted_playlist_items[0]
-    print sorted_playlist_items[0].item_id
-    print sorted_playlist_items[0].didl_metadata
+    print(sorted_playlist_items[0])
+    print(sorted_playlist_items[0].item_id)
+    print(sorted_playlist_items[0].didl_metadata)
     return
 
     new_pl = speaker.create_sonos_playlist(title)
@@ -197,14 +203,14 @@ def main():
       isp = InspectSonosPlaylist()
       coord = isp.find_coordinator()
       if coord is not None:
-        print "Using coordinator speaker {0} - {1}".format(coord.player_name,
-                                                           coord.ip_address)
+        warning("Using coordinator speaker {0} - {1}".format(coord.player_name,
+                                                             coord.ip_address))
         all_playlists = isp.get_playlists(coord)
         pl_titles = ["'" + pl.title + "'" for pl in all_playlists]
 
         if len(titles) == 0:
           if not all_flag:
-            print "Known sonos playlists are: " + " ".join(pl_titles)
+            warning("Known sonos playlists are: " + " ".join(pl_titles))
             sys.exit(0)
           else:
             playlists = all_playlists
