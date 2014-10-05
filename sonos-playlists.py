@@ -18,12 +18,19 @@ import sys
 import codecs
 sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
+try:
+  import simplejson as json
+except ImportError:
+  # Python 2.6+
+  import json
+
 # 2.7+
 import argparse
 
 # local
 import soco
 import requests.packages.urllib3.exceptions
+from soco.xml import XML
 
 from common import is_playing_tv, find_all_coordinators, get_all_playlist_items
 
@@ -118,6 +125,13 @@ class InspectSonosPlaylist(object):
                                                                   item.creator,
                                                                   first_index)
 
+  def print_playlist_json(self, speaker, playlist):
+    """ Print a JSON dump of a sonos playlist """
+    playlist_items = self.get_all_playlist_items(speaker, playlist)
+    (duplicates, unique_items) = self.dedup_items(playlist_items)
+    for item in unique_items:
+      print json.dumps(item.to_dict)
+
   def create_deduped_playlist(self, speaker, playlist, title):
     """ Create a new deduped sonos playlist
 
@@ -157,11 +171,17 @@ def main():
                         default = False,
                         help = 'debug messages (default: False)')
 
+    parser.add_argument('-j', '--json',
+                        action = 'store_true',
+                        default = False,
+                        help = 'dump playlist in JSON (default: False)')
+
     parser.add_argument('titles', metavar='TITLE', nargs='*',
                         help='playlist title')
     args = parser.parse_args()
 
-    allflag = args.all
+    all_flag = args.all
+    json_flag = args.json
     debug = args.debug
     titles = args.titles
     ######################################################################
@@ -183,7 +203,7 @@ def main():
         pl_titles = ["'" + pl.title + "'" for pl in all_playlists]
 
         if len(titles) == 0:
-          if not allflag:
+          if not all_flag:
             print "Known sonos playlists are: " + " ".join(pl_titles)
             sys.exit(0)
           else:
@@ -198,7 +218,10 @@ def main():
             playlists.append(playlist)
 
         for playlist in playlists:
-          isp.inspect_playlist(coord, playlist)
+          if json_flag:
+            isp.print_playlist_json(coord, playlist)
+          else:
+            isp.inspect_playlist(coord, playlist)
           # isp.create_deduped_playlist(coord, playlist, title + ' NEW')
 
       else:
