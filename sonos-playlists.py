@@ -147,6 +147,11 @@ def main():
     """Main method"""
 
     parser = argparse.ArgumentParser(description='Inspect SONOS playlist')
+    parser.add_argument('-a', '--all',
+                        action = 'store_true',
+                        default = False,
+                        help = 'all playlists (default: False)')
+
     parser.add_argument('-d', '--debug',
                         action = 'store_true',
                         default = False,
@@ -156,6 +161,7 @@ def main():
                         help='playlist title')
     args = parser.parse_args()
 
+    allflag = args.all
     debug = args.debug
     titles = args.titles
     ######################################################################
@@ -173,19 +179,27 @@ def main():
       if coord is not None:
         print "Using coordinator speaker {0} - {1}".format(coord.player_name,
                                                            coord.ip_address)
-        pl_titles = ["'" + pl.title + "'" for pl in isp.get_playlists(coord)]
+        all_playlists = isp.get_playlists(coord)
+        pl_titles = ["'" + pl.title + "'" for pl in all_playlists]
 
         if len(titles) == 0:
-          print "Known sonos playlists are: " + " ".join(pl_titles)
+          if not allflag:
+            print "Known sonos playlists are: " + " ".join(pl_titles)
+            sys.exit(0)
+          else:
+            playlists = all_playlists
         else:
+          playlists = []
           for title in titles:
             playlist = isp.find_playlist(coord, title)
             if playlist is None:
               LOGGER.error("Could not find sonos playlist with title '{0}' - known ones are: {1}".format(title, " ".join(pl_titles)))
               sys.exit(1)
-            else:
-              isp.inspect_playlist(coord, playlist)
-              # isp.create_deduped_playlist(coord, playlist, title + ' NEW')
+            playlists.append(playlist)
+
+        for playlist in playlists:
+          isp.inspect_playlist(coord, playlist)
+          # isp.create_deduped_playlist(coord, playlist, title + ' NEW')
 
       else:
         LOGGER.error("Could not find sonos coordinator speaker")
