@@ -3,12 +3,14 @@
 # system
 import re
 import time
+import urllib
 
 
 import soco
 
 from soco.utils import really_utf8
 from soco.xml import XML
+from soco.data_structures import get_ml_item, SearchResult
 
 
 def speaker_group_label(speaker):
@@ -119,3 +121,47 @@ def create_sonos_playlist_from_queue(speaker, title):
     uri = "file:///jffs/settings/savedqueues.rsq#{0}".format(obj_id)
 
     return MLSonosPlaylist(uri, title, 'SQ:')
+
+
+def search_track(speaker, artist, album=None, track=None,
+                 start=0, max_items=100, full_album_art_uri=False):
+    """Search for an artist, artist's albums, or specific track.
+
+    Keyword arguments:
+        artist: Artist name
+        albumn: Album name
+        track: Track name
+        start (int): The starting index of the results
+        max_items (int): The maximum number of items to return
+        full_album_art_uri(bool): If the album art URI should include the
+            IP address
+
+    Returns:
+        dict: A :py:class:`~.soco.data_structures.SearchResult` object
+
+    Raises:
+        SoCoUPnPException: With ``error_code='701'`` if the item cannot be
+            found
+    """
+    search = u'A:ALBUMARTIST/' + urllib.quote(artist.encode('utf-8'))
+    if album is not None:
+        search += u'/' + urllib.quote(album.encode('utf-8'))
+        if track is not None:
+            search += u'/' + urllib.quote(track.encode('utf-8'))
+
+    response, metadata = speaker._music_lib_search(search, start, max_items)
+
+    metadata['search_type'] = 'browse'
+
+    # Parse the results
+    dom = XML.fromstring(really_utf8(response['Result']))
+    item_list = []
+    for container in dom:
+        item = get_ml_item(container)
+        # Check if the album art URI should be fully qualified
+        if full_album_art_uri:
+            speaker._update_album_art_to_full_uri(item)
+        item_list.append(item)
+
+    # pylint: disable=star-args
+    return SearchResult(item_list, **metadata)
