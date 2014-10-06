@@ -123,6 +123,9 @@ def create_sonos_playlist_from_queue(speaker, title):
     return MLSonosPlaylist(uri, title, 'SQ:')
 
 
+def _escape_path(path):
+    return urllib.quote(path.encode('utf-8')).replace('/', '%2F')
+
 def search_track(speaker, artist, album=None, track=None,
                  start=0, max_items=100, full_album_art_uri=False):
     """Search for an artist, artist's albums, or specific track.
@@ -143,11 +146,11 @@ def search_track(speaker, artist, album=None, track=None,
         SoCoUPnPException: With ``error_code='701'`` if the item cannot be
             found
     """
-    search = u'A:ALBUMARTIST/' + urllib.quote(artist.encode('utf-8'))
+    search = u'A:ALBUMARTIST/' + _escape_path(artist)
     if album is not None:
-        search += u'/' + urllib.quote(album.encode('utf-8'))
+        search += u'/' + _escape_path(album)
         if track is not None:
-            search += u'/' + urllib.quote(track.encode('utf-8'))
+            search += u'/' + _escape_path(track)
 
     response, metadata = speaker._music_lib_search(search, start, max_items)
 
