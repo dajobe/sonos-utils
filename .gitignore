@@ -1,3 +1,7 @@
-*pyc
+*.log
+*.pyb
+*.pyc
+*.xml
 *~
 notes*
+playlists*/
