@@ -131,12 +131,12 @@ class InspectSonosPlaylist(object):
                                                                     item.creator,
                                                                     first_index))
 
-  def print_playlist_json(self, speaker, playlist):
+  def print_playlist_json(self, speaker, playlist, file=sys.stdout):
     """ Print a JSON dump of a sonos playlist """
     playlist_items = self.get_all_playlist_items(speaker, playlist)
     (duplicates, unique_items) = self.dedup_items(playlist_items)
     for item in unique_items:
-      print(json.dumps(item.to_dict))
+      print(json.dumps(item.to_dict), file=file)
 
   def create_deduped_playlist(self, speaker, playlist, title):
     """ Create a new deduped sonos playlist
@@ -225,7 +225,11 @@ def main():
 
         for playlist in playlists:
           if json_flag:
-            isp.print_playlist_json(coord, playlist)
+            if all_flag:
+              with open(playlist.title + '.jpl', 'w') as handle:
+                isp.print_playlist_json(coord, playlist, handle)
+            else:
+                isp.print_playlist_json(coord, playlist)
           else:
             isp.inspect_playlist(coord, playlist)
           # isp.create_deduped_playlist(coord, playlist, title + ' NEW')
