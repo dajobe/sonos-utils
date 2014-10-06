@@ -1,3 +1,4 @@
+*.jpl
 *.log
 *.pyb
 *.pyc
@@ -5,3 +6,4 @@
 *~
 notes*
 playlists*/
+old/
