@@ -22,7 +22,7 @@ import argparse
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import find_all_coordinators, create_sonos_playlist_from_queue
+from common import find_all_coordinators
 
 
 LOGGER = logging.getLogger('sonos-save-queue')
@@ -71,7 +71,7 @@ def main():
 
         print "Saving queue into new playlist '{0}'".format(title)
 
-        playlist = create_sonos_playlist_from_queue(coord, title)
+        playlist = coord.create_sonos_playlist_from_queue(title)
 
         print "Created sonos playlist {0} - '{1}' ".format(playlist.item_id,
                                                            playlist.title)

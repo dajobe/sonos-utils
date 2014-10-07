@@ -85,29 +85,6 @@ def get_all_playlist_items(speaker, playlist):
 from soco.data_structures import MLSonosPlaylist
 
 
-def create_sonos_playlist_from_queue(speaker, title):
-    """ Create a new sonos playlist from the queue.
-
-        :params title: Name of the playlist
-
-        :returns: An instance of
-            :py:class:`~.soco.data_structures.MLSonosPlaylist`
-
-    """
-    # Note: probably same as Queue service method SaveAsSonosPlaylist
-    # but this has not been tested.  This method is what the
-    # controller uses.
-    response = speaker.avTransport.SaveQueue([
-        ('InstanceID', 0),
-        ('Title', title),
-        ('ObjectID', '')
-    ])
-    obj_id = response['AssignedObjectID'].split(':', 2)[1]
-    uri = "file:///jffs/settings/savedqueues.rsq#{0}".format(obj_id)
-
-    return MLSonosPlaylist(uri, title, 'SQ:')
-
-
 def _escape_path(path):
     return urllib.quote(path.encode('utf-8')).replace('/', '%2F')
 
