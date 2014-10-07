@@ -13,21 +13,6 @@ from soco.xml import XML
 from soco.data_structures import get_ml_item, SearchResult
 
 
-def speaker_group_label(speaker):
-    """ A description of the group """
-    group_names = sorted([m.player_name for m in speaker.group.members])
-    return ", ".join(group_names)
-
-
-def short_speaker_group_label(speaker):
-    """ A short description of the group """
-    group_names = sorted([m.player_name for m in speaker.group.members])
-    group_label = group_names[0]
-    if len(group_names) > 1:
-        group_label += " + {0}".format(len(group_names)-1)
-    return group_label
-
-
 def find_all_coordinators(attempts=5):
     """ Find all speakers and coordinators """
     coords = []

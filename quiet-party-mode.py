@@ -14,7 +14,7 @@ import soco
 import requests.packages.urllib3.exceptions
 
 
-from common import speaker_group_label, short_speaker_group_label, find_all_coordinators
+from common import find_all_coordinators
 
 
 QUIET_VOLUME = 12
@@ -38,7 +38,7 @@ def main():
         for s in speakers:
             s.volume = QUIET_VOLUME
 
-        print "Arranged speakers into group: " + speaker_group_label(coord)
+        print "Arranged speakers into group: " + coord.group.label
 
     except requests.packages.urllib3.exceptions.ProtocolError, exc:
         print "Network error: " + str(exc)

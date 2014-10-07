@@ -28,10 +28,7 @@ try:
 
 
   for c in coords:
-    group_names = sorted([m.player_name for m in c.group.members])
-    group_label = group_names[0]
-    if len(group_names) > 1:
-      group_label += " + %d" % (len(group_names)-1, )
+    group_label = c.group.short_label
 
     trans_info = c.get_current_transport_info()
     track_info = c.get_current_track_info()
