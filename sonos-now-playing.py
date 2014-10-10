@@ -16,9 +16,9 @@ from common import is_playing_tv, find_all_coordinators
 try:
   (speakers, coords) = find_all_coordinators()
   if speakers is None:
-    raise "Could not find any speakers"
+      raise Exception("Could not find any speakers")
   if len(coords) == 0:
-    raise "Could not find any coordinators in speakers"
+      raise Exception("Could not find any coordinators in speakers")
 
   PLAY_STATE_LABELS = {
     'STOPPED' :         'Stopped',
