@@ -88,13 +88,14 @@ from soco.data_structures import MLSonosPlaylist
 def _escape_path(path):
     return urllib.quote(path.encode('utf-8')).replace('/', '%2F')
 
+
 def search_track(speaker, artist, album=None, track=None,
                  start=0, max_items=100, full_album_art_uri=False):
     """Search for an artist, artist's albums, or specific track.
 
     Keyword arguments:
         artist: Artist name
-        albumn: Album name
+        album: Album name
         track: Track name
         start (int): The starting index of the results
         max_items (int): The maximum number of items to return
@@ -111,8 +112,6 @@ def search_track(speaker, artist, album=None, track=None,
     search = u'A:ALBUMARTIST/' + _escape_path(artist)
     if album is not None:
         search += u'/' + _escape_path(album)
-        if track is not None:
-            search += u'/' + _escape_path(track)
 
     response, metadata = speaker._music_lib_search(search, start, max_items)
 
@@ -123,6 +122,13 @@ def search_track(speaker, artist, album=None, track=None,
     item_list = []
     for container in dom:
         item = get_ml_item(container)
+        # this does not work: item is MLCategory or item is MLSameArtist
+        if item.item_class == 'object.container' or item.item_class == 'object.container.playlistContainer.sameArtist':
+            continue
+
+        if track is not None and item.title != track:
+            continue
+
         # Check if the album art URI should be fully qualified
         if full_album_art_uri:
             speaker._update_album_art_to_full_uri(item)
@@ -130,3 +136,81 @@ def search_track(speaker, artist, album=None, track=None,
 
     # pylint: disable=star-args
     return SearchResult(item_list, **metadata)
+
+
+def get_albums_for_artist(speaker, artist,
+                          start=0, max_items=100, full_album_art_uri=False):
+    """Search for an artist's albums.
+
+    Parameters:
+        artist: Artist name
+        start (int): The starting index of the results
+        max_items (int): The maximum number of items to return
+        full_album_art_uri(bool): If the album art URI should include the
+            IP address
+
+    Returns:
+        dict: A list of :py:class:`~.soco.data_structures.MLAlbum` object
+
+    Raises:
+        SoCoUPnPException: With ``error_code='701'`` if the item cannot be
+            found
+    """
+    search = u'A:ALBUMARTIST/' + _escape_path(artist)
+
+    response, _ = speaker._music_lib_search(search, start, max_items)
+
+    # Parse the results
+    dom = XML.fromstring(really_utf8(response['Result']))
+    item_list = []
+    for container in dom:
+        item = get_ml_item(container)
+        # this does not work: item is MLAlbum
+        if item.item_class == 'object.container.album.musicAlbum':
+            # Check if the album art URI should be fully qualified
+            if full_album_art_uri:
+                speaker._update_album_art_to_full_uri(item)
+            item_list.append(item)
+
+    # pylint: disable=star-args
+    return item_list
+
+
+def get_tracks_for_album(speaker, artist, album,
+                          start=0, max_items=100, full_album_art_uri=False):
+    """Search for an artist's albums.
+
+    Parameters:
+        artist: Artist name
+        album: Album name
+        start (int): The starting index of the results
+        max_items (int): The maximum number of items to return
+        full_album_art_uri(bool): If the album art URI should include the
+            IP address
+
+    Returns:
+        dict: A list of :py:class:`~.soco.data_structures.MLTrack` object
+
+    Raises:
+        SoCoUPnPException: With ``error_code='701'`` if the item cannot be
+            found
+    """
+    search = u'A:ALBUMARTIST/' + _escape_path(artist)
+    search += u'/' + _escape_path(album)
+
+    response, _ = speaker._music_lib_search(search, start, max_items)
+
+    # Parse the results
+    dom = XML.fromstring(really_utf8(response['Result']))
+    item_list = []
+    for container in dom:
+        item = get_ml_item(container)
+        # this does not work: item is MLTrack
+        if item.item_class == 'object.item.audioItem.musicTrack':
+            # Check if the album art URI should be fully qualified
+            if full_album_art_uri:
+                speaker._update_album_art_to_full_uri(item)
+            item_list.append(item)
+
+    # pylint: disable=star-args
+    return item_list
