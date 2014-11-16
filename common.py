@@ -10,7 +10,7 @@ import soco
 
 from soco.utils import really_utf8
 from soco.xml import XML
-from soco.data_structures import get_ml_item, SearchResult
+from soco.data_structures import get_didl_object, SearchResult
 
 
 def find_all_coordinators(attempts=5):
@@ -82,9 +82,6 @@ def get_all_playlist_items(speaker, playlist):
     return playlist_items
 
 
-from soco.data_structures import MLSonosPlaylist
-
-
 def _escape_path(path):
     return urllib.quote(path.encode('utf-8')).replace('/', '%2F')
 
@@ -121,7 +118,7 @@ def search_track(speaker, artist, album=None, track=None,
     dom = XML.fromstring(really_utf8(response['Result']))
     item_list = []
     for container in dom:
-        item = get_ml_item(container)
+        item = get_didl_object(container)
         # this does not work: item is MLCategory or item is MLSameArtist
         if item.item_class == 'object.container' or item.item_class == 'object.container.playlistContainer.sameArtist':
             continue
@@ -164,7 +161,7 @@ def get_albums_for_artist(speaker, artist,
     dom = XML.fromstring(really_utf8(response['Result']))
     item_list = []
     for container in dom:
-        item = get_ml_item(container)
+        item = get_didl_object(container)
         # this does not work: item is MLAlbum
         if item.item_class == 'object.container.album.musicAlbum':
             # Check if the album art URI should be fully qualified
@@ -204,7 +201,7 @@ def get_tracks_for_album(speaker, artist, album,
     dom = XML.fromstring(really_utf8(response['Result']))
     item_list = []
     for container in dom:
-        item = get_ml_item(container)
+        item = get_didl_object(container)
         # this does not work: item is MLTrack
         if item.item_class == 'object.item.audioItem.musicTrack':
             # Check if the album art URI should be fully qualified
