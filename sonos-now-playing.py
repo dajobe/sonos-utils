@@ -10,7 +10,7 @@ sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 import soco
 import requests.packages.urllib3.exceptions
 
-from common import is_playing_tv, find_all_coordinators
+from common import find_all_coordinators
 
 
 try:
@@ -44,7 +44,7 @@ try:
     else:
       track = ''
 
-    if is_playing_tv(c):
+    if c.is_playing_tv:
       line = u"{0:15s}: Playing TV".format(group_label)
     else:
       line = u"{0:15s}: {1:<7s} Track: {2} (Queue {3})".format(group_label,

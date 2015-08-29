@@ -34,7 +34,7 @@ import soco
 import requests.packages.urllib3.exceptions
 from soco.xml import XML
 
-from common import is_playing_tv, find_all_coordinators, get_all_playlist_items
+from common import find_all_coordinators, get_all_playlist_items
 
 LOGGER = logging.getLogger('sonos-playlists')
 

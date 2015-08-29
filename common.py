@@ -49,19 +49,6 @@ def get_all_queue_items(speaker):
     return playlist_items
 
 
-def is_playing_tv(speaker):
-    """ Is the speaker input from TV?
-
-    return True or False
-    """
-    response = speaker.avTransport.GetPositionInfo([
-        ('InstanceID', 0),
-        ('Channel', 'Master')
-    ])
-    track_uri = response['TrackURI']
-    return re.match(r'^x-sonos-htastream:', track_uri) is not None
-
-
 def get_all_playlist_items(speaker, playlist):
     """ get a list of all items in the given playlist """
     batch_size = 400
