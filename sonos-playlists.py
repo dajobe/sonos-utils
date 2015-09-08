@@ -99,10 +99,10 @@ class InspectSonosPlaylist(object):
     unique_items = []
     seen = dict()
     for item in playlist_items:
-      if item.uri in seen:
-        duplicates.append((index, item, seen[item.uri]))
+      if item.item_id in seen:
+        duplicates.append((index, item, seen[item.item_id]))
       else:
-        seen[item.uri] = index
+        seen[item.item_id] = index
         unique_items.append(item)
       index += 1
 
@@ -136,7 +136,7 @@ class InspectSonosPlaylist(object):
     playlist_items = self.get_all_playlist_items(speaker, playlist)
     (duplicates, unique_items) = self.dedup_items(playlist_items)
     for item in unique_items:
-      print(json.dumps(item.to_dict), file=file)
+      print(json.dumps(item.to_dict()), file=file)
 
   def create_deduped_playlist(self, speaker, playlist, title):
     """ Create a new deduped sonos playlist
