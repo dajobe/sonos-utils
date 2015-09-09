@@ -118,18 +118,22 @@ class InspectSonosPlaylist(object):
     (duplicates, unique_items) = self.dedup_items(playlist_items)
     index = 1
     for item in unique_items:
-      warning("{0:4d} {1} - {2} / {3}".format(index, item.title, item.album,
-                                              item.creator))
+      album = item.album if hasattr(item, 'album') else 'No Album'
+      creator = item.creator if hasattr(item, 'creator') else 'No Creator'
+      warning(u"{0:4d} {1} - {2} / {3}".format(index, item.title, album,
+                                               creator))
       index += 1
 
     if len(duplicates) > 0:
       warning("\nPlaylist has {0} duplicates".format(len(duplicates)))
       for (index, item, first_index) in duplicates:
-        warning("  {0:4d} {1} - {2} / {3} seen first at {4}".format(index,
-                                                                    item.title,
-                                                                    item.album,
-                                                                    item.creator,
-                                                                    first_index))
+        album = item.album if hasattr(item, 'album') else 'No Album'
+        creator = item.creator if hasattr(item, 'creator') else 'No Creator'
+        warning(u"  {0:4d} {1} - {2} / {3} seen first at {4}".format(index,
+                                                                     item.title,
+                                                                     album,
+                                                                     creator,
+                                                                     first_index))
 
   def print_playlist_json(self, speaker, playlist, file=sys.stdout):
     """ Print a JSON dump of a sonos playlist """
