@@ -52,7 +52,8 @@ def get_all_playlist_items(speaker, playlist):
 
     playlist_items = []
     while True:
-        out = speaker.browse(playlist, max_items=batch_size, start=start)
+        out = speaker.music_library.browse(playlist, max_items=batch_size,
+                                           start=start)
         if total is None:
             total = out.total_matches
 
