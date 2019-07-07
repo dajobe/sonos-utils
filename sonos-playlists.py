@@ -80,7 +80,7 @@ class InspectSonosPlaylist(object):
     return result
 
 
-  def get_all_playlist_items(self, speaker, playlist):
+  def _get_all_playlist_items(self, speaker, playlist):
     """ get a list of all items in the given playlist """
     playlist_items = get_all_playlist_items(speaker, playlist)
     warning("Playlist '{0}' has {1} items" .format(playlist.title,
@@ -113,7 +113,7 @@ class InspectSonosPlaylist(object):
     warning("Found sonos playlist {0} - '{1}' ".format(playlist.item_id,
                                                        playlist.title))
 
-    playlist_items = self.get_all_playlist_items(speaker, playlist)
+    playlist_items = self._get_all_playlist_items(speaker, playlist)
 
     (duplicates, unique_items) = self.dedup_items(playlist_items)
     index = 1
@@ -137,7 +137,7 @@ class InspectSonosPlaylist(object):
 
   def print_playlist_json(self, speaker, playlist, file=sys.stdout):
     """ Print a JSON dump of a sonos playlist """
-    playlist_items = self.get_all_playlist_items(speaker, playlist)
+    playlist_items = self._get_all_playlist_items(speaker, playlist)
     (duplicates, unique_items) = self.dedup_items(playlist_items)
     for item in unique_items:
       print(json.dumps(item.to_dict()), file=file)

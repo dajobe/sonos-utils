@@ -17,7 +17,7 @@ import requests.packages.urllib3.exceptions
 from common import find_all_coordinators
 
 
-QUIET_VOLUME = 12
+QUIET_VOLUME = 10
 
 def main():
     """Main method"""
