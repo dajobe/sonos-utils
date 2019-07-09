@@ -37,6 +37,8 @@ def main():
 
         for s in speakers:
             s.volume = QUIET_VOLUME
+            if s.mute:
+                s.mute = False
 
         print "Arranged speakers into group: " + coord.group.label
 
